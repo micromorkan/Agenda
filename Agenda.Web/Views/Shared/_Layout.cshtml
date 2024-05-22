@@ -1,0 +1,278 @@
+﻿@using System.Security.Claims;
+@using Agenda.Domain.Util;
+@using Agenda.Web.Helpers;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Brascon</title>
+
+    <link href="~/css/jquery.datatables.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="~/css/nprogress.css" rel="stylesheet">
+    <link href="~/css/green.css" rel="stylesheet" />
+
+    <link href="~/css/datatables.bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/buttons.bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/fixedheader.bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/responsive.bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/scroller.bootstrap.min.css" rel="stylesheet" />
+
+    <link href="~/css/custom.min.css" rel="stylesheet">
+    <link href="~/css/site.css" rel="stylesheet">
+    <link href="~/css/select2.min.css" rel="stylesheet" />
+    <link href="~/css/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/css/switchery.min.css" rel="stylesheet" />
+    <meta name="robots" content="index, nofollow">
+</head>
+<body class="nav-md">
+    <div id="loading" style="display:none;">
+        <img id="loading-image" src="~/img/loading.gif" alt="Loading..." />
+    </div>
+    <div class="container body">
+        <div class="main_container">
+            <div class="col-md-3 left_col">
+                <div class="left_col scroll-view">
+                    <div class="navbar nav_title" style="border: 0;">
+                        <a href="@Url.Action("Index", "Home")" class="site_title"><i class="fa fa-logo-white"></i><span> Brascon</span></a>
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <br />
+
+                    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                        <div class="menu_section">
+                            @if (User.GetProfile() != Constants.PROFILE_ADVOGADO)
+                            {
+                                <h3>Página Inicial</h3>
+                                <ul class="nav side-menu">
+                                    <li>
+                                        <a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
+                                            <li><a href="@Url.Action("Index", "Home")">Dashboard - Contratos</a></li>
+                                            @if (User.GetProfile() == Constants.PROFILE_ADMINISTRATIVO ||
+                                           User.GetProfile() == Constants.PROFILE_GERENTE ||
+                                           User.GetProfile() == Constants.PROFILE_DIRETOR)
+                                            {
+                                                <li><a href="@Url.Action("Financeiro", "Home")">Dashboard - Financeiro</a></li>
+                                            }
+                                        </ul>
+                                    </li>
+                                </ul>
+                            }
+                            <br />
+                            <h3>Ficha Cadastral</h3>
+                            <ul class="nav side-menu">
+                                @if (User.GetProfile() == Constants.PROFILE_REPRESENTANTE ||
+                                User.GetProfile() == Constants.PROFILE_ADMINISTRATIVO ||
+                                User.GetProfile() == Constants.PROFILE_GERENTE ||
+                                User.GetProfile() == Constants.PROFILE_DIRETOR)
+                                {
+                                    <li>
+                                        <a><i class="fa fa-users"></i> Clientes <span class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
+
+                                            <li><a href="@Url.Action("Index", "Client")">Pesquisar</a></li>
+                                            <li><a href="@Url.Action("Create", "Client")">Cadastrar</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a><i class="fa fa-suitcase"></i> Propostas <span class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
+                                            <li><a href="@Url.Action("Index", "Proposal")">Pesquisar</a></li>
+                                            @if (User.GetProfile() == Constants.PROFILE_REPRESENTANTE || User.GetProfile() == Constants.PROFILE_TI || User.GetProfile() == Constants.PROFILE_GERENTE || User.GetProfile() == Constants.PROFILE_DIRETOR)
+                                            {
+                                                <li><a href="@Url.Action("Create", "Proposal")">Cadastrar</a></li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                                @if (User.GetProfile() == Constants.PROFILE_REPRESENTANTE ||
+                                User.GetProfile() == Constants.PROFILE_ADMINISTRATIVO ||
+                                User.GetProfile() == Constants.PROFILE_GERENTE ||
+                                User.GetProfile() == Constants.PROFILE_DIRETOR ||
+                                User.GetProfile() == Constants.PROFILE_ADVOGADO)
+                                {
+                                    <li>
+                                        <a><i class="fa fa-file-text-o"></i> Contratos <span class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
+                                            <li><a href="@Url.Action("Index", "Contract")">Pesquisar</a></li>
+                                        </ul>
+                                    </li>
+                                }
+                            </ul>
+                            @{
+                                if (User.GetProfile() == Constants.PROFILE_DIRETOR)
+                                {
+                                    <br />
+                                    <h3>Financeiro</h3>
+                                    <ul class="nav side-menu">
+                                        <li>
+                                            <a><i class="fa fa-money"></i> Borderô <span class="fa fa-chevron-down"></span></a>
+                                            <ul class="nav child_menu">
+                                                <li><a href="@Url.Action("Index", "Bordero")">Consultar</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                }
+                            }
+                            @{
+                                //TODO - REMOVER REPRESENTANTE POIS NAO TERA ACESSO AOS USUARIOS
+                                if (User.GetProfile() == Constants.PROFILE_DIRETOR || User.GetProfile() == Constants.PROFILE_TI)
+                                {
+                                    <br />
+                                    <h3>Configuração</h3>
+                                    <ul class="nav side-menu">
+                                        <li>
+                                            <a><i class="fa fa-cogs"></i> Administradoras <span class="fa fa-chevron-down"></span></a>
+                                            <ul class="nav child_menu">
+                                                <li><a href="@Url.Action("Index", "FinancialAdmin")">Pesquisar</a></li>
+                                                <li><a href="@Url.Action("Create", "FinancialAdmin")">Cadastrar</a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a><i class="fa fa-cogs"></i> Tipo Produto <span class="fa fa-chevron-down"></span></a>
+                                            <ul class="nav child_menu">
+                                                <li><a href="@Url.Action("Index", "ProductType")">Pesquisar</a></li>
+                                                <li><a href="@Url.Action("Create", "ProductType")">Cadastrar</a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a><i class="fa fa-cogs"></i> Tipo Tabela <span class="fa fa-chevron-down"></span></a>
+                                            <ul class="nav child_menu">
+                                                <li><a href="@Url.Action("Index", "TableType")">Pesquisar</a></li>
+                                                <li><a href="@Url.Action("Create", "TableType")">Cadastrar</a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a><i class="fa fa-cogs"></i> Crédito <span class="fa fa-chevron-down"></span></a>
+                                            <ul class="nav child_menu">
+                                                <li><a href="@Url.Action("Index", "Credit")">Pesquisar</a></li>
+                                                <li><a href="@Url.Action("Create", "Credit")">Cadastrar</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                }
+                            }
+                            @{
+                                //TODO - REMOVER REPRESENTANTE POIS NAO TERA ACESSO AOS USUARIOS
+                                if (User.GetProfile() == Constants.PROFILE_TI)
+                                {
+                                    <br />
+                                    <h3>Gerenciamento</h3>
+                                    <ul class="nav side-menu">
+                                        <li>
+                                            <a><i class="fa fa-user"></i> Usuários <span class="fa fa-chevron-down"></span></a>
+                                            <ul class="nav child_menu">
+                                                <li><a href="@Url.Action("Index", "Users")">Pesquisar</a></li>
+                                                <li><a href="@Url.Action("Create", "Users")">Cadastrar</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="sidebar-footer hidden-small">
+                        @*<a data-toggle="tooltip" data-placement="top" title="Settings">
+                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                        <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="Lock">
+                        <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
+                        <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                        </a>*@
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="top_nav">
+                <div class="nav_menu" style="background-color:#DEFFDD">
+                    <div class="nav toggle">
+                        <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                    </div>
+                    <nav class="nav navbar-nav">
+                        <ul class=" navbar-right">
+                            <li class="nav-item dropdown open" style="padding-left: 15px;">
+                                <a class="user-profile dropdown-toggle" aria-haspopup="true" id="navbarDropdown" data-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+                                    @User.Identity.Name
+                                </a>
+                                <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
+                                    @*<a class="dropdown-item" href="@Url.Action("ChangePassword", "Users", new { id = User.FindFirstValue(ClaimTypes.NameIdentifier) })"><i class="fa fa-cog pull-right"></i> Trocar Senha</a>*@
+                                    <a class="dropdown-item" href="@Url.Action("LogOut", "Home")"><i class="fa fa-sign-out pull-right"></i> Sair</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+            <script src="~/js/moment-with-locales.min.js"></script>
+            <div class="right_col" role="main">
+                @RenderBody()
+            </div>
+
+
+            <footer style="background: #F7F7F7;">
+                <div class="pull-right">
+                </div>
+                <div class="clearfix"></div>
+            </footer>
+
+        </div>
+    </div>
+
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap-toolkit.min.js"></script>
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+    <script src="~/js/fastclick.js"></script>
+    <script src="~/js/nprogress.js"></script>
+    <script src="~/js/jquery.datatables.min.js"></script>
+    <script src="~/js/datatables.bootstrap.min.js"></script>
+    <script src="~/js/datatables.buttons.min.js"></script>
+    <script src="~/js/buttons.bootstrap.min.js"></script>
+    <script src="~/js/buttons.flash.min.js"></script>
+    <script src="~/js/buttons.html5.min.js"></script>
+    <script src="~/js/buttons.print.min.js"></script>
+    <script src="~/js/datatables.fixedheader.min.js"></script>
+    <script src="~/js/datatables.keytable.min.js"></script>
+    <script src="~/js/datatables.responsive.min.js"></script>
+    <script src="~/js/responsive.bootstrap.js"></script>
+    <script src="~/js/datatables.scroller.min.js"></script>
+    <script src="~/js/jszip.min.js"></script>
+    <script src="~/js/pdfmake.min.js"></script>
+    <script src="~/js/vfs_fonts.js"></script>
+    <script src="~/js/sweetalert2.min.js"></script>
+    <script src="~/js/sweetalert2.common.js"></script>
+    <script src="~/js/sweetalert2.core.js"></script>
+
+    <script src="~/js/custom.min.js"></script>
+    <script src="~/js/site.js"></script>
+    <script src="~/js/switchery.min.js"></script>
+    <script src="~/js/pagination/pagination.js"></script>
+    <script src="~/js/select2.full.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @if (TempData[Constants.SYSTEM_ERROR_KEY] != null)
+    {
+        <script>
+            ShowModalError('@TempData[Constants.SYSTEM_ERROR_KEY].ToString()');
+        </script>
+
+        TempData[Constants.SYSTEM_ERROR_KEY] = null;
+    }
+</body>
+</html>

@@ -1,0 +1,109 @@
+﻿@using System.Text.Json;
+@model Agenda.Web.Views.Shared.Components.Models.FillBar
+
+@*
+                    MODO DE USO
+
+    ###### EXEMPLO PREENCHIMENTO DO OBJETO #######
+
+    FillBar bar = new FillBar
+    {
+        Id = 1,
+        Titulo = "Pré-Pago Semanal",
+        Descricao = "Smart Pre Local + 500mb",
+        ValorReal = "350mb",
+        ValorPorcentagem = 65,
+        BarColor = "#74DF00",
+        BadgeText = "R$ 9,99",
+        BadgeColor = "#00ff00"
+    });
+    ############################################
+
+*@
+<style>
+    .valorreal {
+        display: inline-block;
+        line-height: 110px;
+        z-index: 2;
+    }
+
+        .valorreal:after {
+            font-size: .8em;
+        }
+</style>
+<div class="col-lg-3 col-md-3 col-sm-4">
+    <div class="x_panel ui-ribbon-container">
+        <div id="fillbar_loading_@Model.Id" class="chart_loading">
+            <img class="fillbar_loading_image" src="~/img/loading.gif" alt="Loading..." />
+        </div>
+        @if (!string.IsNullOrEmpty(Model.BadgeText))
+        {
+            <div class="ui-ribbon-wrapper">
+                <div class="ui-ribbon" style="background-color: @Model.BadgeColor;">
+                    @Model.BadgeText
+                </div>
+            </div>
+        }
+        <div class="x_title text-center">
+            <h4>@Model.Titulo</h4>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content text-center">
+            <div style="text-align: center; margin-bottom: 17px">
+                <span id="fillbar_@Model.Id" class="chart" data-percent="@Model.ValorPorcentagem">
+                    <span class="percent">@Model.ValorReal</span>
+                    <canvas height="110" width="110"></canvas>
+                </span>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Descricao))
+            {
+                <div class="divider"></div>
+                <p>@Model.Descricao</p>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        if ("undefined" != typeof $.fn.easyPieChart) {
+            $("#fillbar_@Html.Raw(JsonSerializer.Serialize(Model.Id))").easyPieChart({
+                easing: "easeOutElastic",
+                delay: 3e3,
+                barColor: @Html.Raw(JsonSerializer.Serialize(Model.BarColor)),
+                trackColor: "#f2f2f2",
+                scaleColor: !1,
+                lineWidth: 5,
+                trackWidth: 4,
+                lineCap: "butt",
+                onStep: function (a, b, c) {
+                    $(this.el).find(".percent").text(Math.round(c))
+                }
+            });
+
+            $('#fillbar_loading_' + @Html.Raw(JsonSerializer.Serialize(Model.Id))).hide();
+
+            setInterval(function () {
+                $('#fillbar_loading_' + @Html.Raw(JsonSerializer.Serialize(Model.Id))).show();
+                $.ajax({
+                    url: '@Url.Action(Html.Raw(JsonSerializer.Serialize(Model.Action).Replace("\"", "")).ToString(), Html.Raw(JsonSerializer.Serialize(Model.Controller).Replace("\"", "")).ToString())',
+                    type: 'POST',
+                    data: null,
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (dados) {
+
+                        $('#fillbar_loading_' + @Html.Raw(JsonSerializer.Serialize(Model.Id))).hide();
+                        var e = window.chart = $("#fillbar_@Html.Raw(JsonSerializer.Serialize(Model.Id))").data("easyPieChart");
+                        e.update(dados.valorPorcentagem)
+                    },
+                    error: function (xhr) {
+                        ExibirModalErro('Não foi possivel atualizar os dados do ' + @Html.Raw(JsonSerializer.Serialize(Model.Titulo)) + '!');
+                    },
+                    async: true,
+                    processData: false
+                });
+            }, @Html.Raw(JsonSerializer.Serialize(Model.IntervaloAtualizacao)));
+        }
+    });
+</script>

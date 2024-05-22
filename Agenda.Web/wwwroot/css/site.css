@@ -1,0 +1,46 @@
+i.fa-logo {
+    content: "";
+    background-image: url('../img/logo.png');
+    width: 40px;
+    height: 20px;
+    /*//WIDTH of the icon height: 100px;
+    //HEIGHT of the icon display: inline-block;*/
+    background-position: center;
+    background-size: cover;
+}
+
+i.fa-logo-white {
+    content: "";
+    background-image: url('../img/logo_white.png');
+    width: 40px;
+    height: 20px;
+    background-position: center;
+    background-size: cover;
+}
+
+.btn-group-xs > .btn, .btn-xs {
+    padding: .30rem;
+    font-size: .6rem;
+    line-height: .5;
+    border-radius: .2rem;
+}
+
+#loading {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    display: block;
+    opacity: 0.7;
+    background-color: #fff;
+    z-index: 99;
+    text-align: center;
+}
+
+#loading-image {
+    position: absolute;
+    left: 45%;
+    top: 40%;
+    z-index: 100;
+}
