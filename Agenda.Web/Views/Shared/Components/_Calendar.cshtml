@@ -20,12 +20,16 @@
         top: 45%;
         z-index: 100;
     }
+
+    .fc-toolbar {
+        text-transform: uppercase;
+    }
 </style>
 
 <div class="x_panel" id="calendar_backgound">
-    <div class="x_title">
-        <h2><b>@Model.NomeUsuario</b> - Calendário de Eventos</h2>
-        <ul class="nav navbar-right panel_toolbox">
+    <div class="x_title center">
+        <h2><b>Sua Agenda</b></h2>
+        @*<ul class="nav navbar-right panel_toolbox">
             <li class="pull-right" title="Ative para atualizar">
                 <input id="chk_update_calendar" type="checkbox" checked="" class="js-switch" style="display: none;" data-switchery="true">
             </li>
@@ -35,7 +39,7 @@
             <li class="pull-right">
                 <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
             </li>
-        </ul>
+        </ul>*@
         <div class="clearfix"></div>
     </div>
     <div class="x_content">
@@ -44,33 +48,33 @@
         </div>
         <div id="calendar" class="fc fc-unthemed fc-ltr">
         </div>
-        <div class="row">
+        @*<div class="row">
             <div class="col-md-2 col-xs-4 text-center"><h3><span class="label label-default" style="background-color: #ff8080; color: #000;">&nbsp;&nbsp;Vencido&nbsp;&nbsp;</span></h3></div>
             <div class="col-md-2 col-xs-4 text-center"><h3><span class="label label-default" style="background-color: #ffff66; color: #000;">&nbsp;Atrasado&nbsp;</span></h3></div>
             <div class="col-md-2 col-xs-4 text-center"><h3><span class="label label-default" style="background-color: #99ff99; color: #000;">&nbsp;Para Hoje&nbsp;</span></h3></div>
             <div class="col-md-2 col-xs-4 text-center"><h3><span class="label label-default" style="background-color: #85e0e0; color: #000;">&nbsp;&nbsp;&nbsp;Futuro&nbsp;&nbsp;&nbsp;</span></h3></div>
             <div class="col-md-2 col-xs-4 text-center"><h3><span class="label label-default" style="background-color: #ff9933; color: #000;">Finalizado</span></h3></div>
             <div class="col-md-2 col-xs-4 text-center"><h3><span class="label label-default" style="background-color: #cc99ff; color: #000;">Cancelado</span></h3></div>
-        </div>
+        </div>*@
     </div>
 </div>
 <div id="calendarModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
                 <h4 id="modalTitle" class="modal-title"></h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
             </div>
             <div id="modalBody" class="modal-body"> </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
             </div>
         </div>
     </div>
 </div>
-@section Scripts {
-    <script src="~/js/calendar/fullcalendar.min.js"></script>
-    <script src="~/js/calendar/pt-br.js"></script>
+@*@section Scripts {*@
+    <script src="~/js/Calendar/fullcalendar.min.js"></script>
+    <script src="~/js/Calendar/pt-br.js"></script>
     <script>
         $(document).ready(function () {
             var blinkColor = "#de64c9";
@@ -79,7 +83,7 @@
 
         function ConfigurarBotoesCalendar() {
             //$('.fc-right .fc-button-group button:eq(0)').text('Mês');
-            $('.fc-right .fc-button-group button:eq(1)').text('Semana');
+            //$('.fc-right .fc-button-group button:eq(1)').text('Semana');
             //$('.fc-right .fc-button-group button:eq(2)').text('Dia');
             //$('.fc-left button:eq(2)').text('Hoje');
         }
@@ -111,7 +115,7 @@
                     header: {
                         left: 'prev,next today',
                         center: 'title',
-                        right: 'month,listWeek'
+                        right: 'month,listMonth'
                     },
                     locale: 'pt-br',
                     eventClick: function (calEvent, jsEvent, view) {
@@ -125,6 +129,8 @@
                             $(jsEvent.target).attr('title', event.title);
                         }
                     },
+                    defaultView: $(window).width() < 765 ? 'listMonth' : 'month',
+                    //windowResize: (arg) => { this.changeView($(window).width() < 765 ? 'listMonth' : 'month') },
                 });
 
                 var eventos = @Html.Raw(JsonSerializer.Serialize(Model.Eventos));
@@ -134,37 +140,37 @@
                 ConfigurarBotoesCalendar();
             }
 
-            if (@Html.Raw(JsonSerializer.Serialize(Model.Acoes.ControllerAtualizarCalendar)) != "" && @Html.Raw(JsonSerializer.Serialize(Model.Acoes.ControllerAtualizarCalendar)) != null && @Html.Raw(JsonSerializer.Serialize(Model.Acoes.ActionAtualizarCalendar)) != "" && @Html.Raw(JsonSerializer.Serialize(Model.Acoes.ActionAtualizarCalendar)) != null) {
-                setInterval(function () {
-                    if ($('#chk_update_calendar').is(':checked')) {
-                        $('#calendar_loading').show();
-                        $.ajax({
-                            url: '@Url.Action(Html.Raw(JsonSerializer.Serialize(Model.Acoes.ActionAtualizarCalendar).Replace("\"", "")).ToString(), Html.Raw(JsonSerializer.Serialize(Model.Acoes.ControllerAtualizarCalendar).Replace("\"", "")).ToString())',
-                            type: 'POST',
-                            data: null,
-                            dataType: 'json',
-                            contentType: 'application/json; charset=utf-8',
-                            success: function (dados) {
+            //if (@Html.Raw(JsonSerializer.Serialize(Model.Acoes.ControllerAtualizarCalendar)) != "" && @Html.Raw(JsonSerializer.Serialize(Model.Acoes.ControllerAtualizarCalendar)) != null && @Html.Raw(JsonSerializer.Serialize(Model.Acoes.ActionAtualizarCalendar)) != "" && @Html.Raw(JsonSerializer.Serialize(Model.Acoes.ActionAtualizarCalendar)) != null) {
+            //    setInterval(function () {
+            //        if ($('#chk_update_calendar').is(':checked')) {
+            //            $('#calendar_loading').show();
+            //            $.ajax({
+            //                url: '@Url.Action(Html.Raw(JsonSerializer.Serialize(Model.Acoes.ActionAtualizarCalendar).Replace("\"", "")).ToString(), Html.Raw(JsonSerializer.Serialize(Model.Acoes.ControllerAtualizarCalendar).Replace("\"", "")).ToString())',
+            //                type: 'POST',
+            //                data: null,
+            //                dataType: 'json',
+            //                contentType: 'application/json; charset=utf-8',
+            //                success: function (dados) {
 
-                                CarregarEventos(dados.Eventos);
+            //                    CarregarEventos(dados.Eventos);
 
-                                if (dados.BackgroundColor != "" && dados.BackgroundColor) {
-                                    $('#calendar_backgound').css('background-color', blinkColor);
-                                    setTimeout(function () { $('#calendar_backgound').css('background-color', dados.BackgroundColor); }, 300);
-                                } else {
-                                    $('#calendar_backgound').css('background-color', blinkColor);
-                                    setTimeout(function () { $('#calendar_backgound').css('background-color', "#FFF"); }, 300);
-                                }
-                            },
-                            error: function (xhr) {
-                                ExibirModalErro('Não foi possivel atualizar os dados do Calendário!');
-                            },
-                            async: true,
-                            processData: false
-                        });
-                    }
-                }, 5000);
-            }
+            //                    if (dados.BackgroundColor != "" && dados.BackgroundColor) {
+            //                        $('#calendar_backgound').css('background-color', blinkColor);
+            //                        setTimeout(function () { $('#calendar_backgound').css('background-color', dados.BackgroundColor); }, 300);
+            //                    } else {
+            //                        $('#calendar_backgound').css('background-color', blinkColor);
+            //                        setTimeout(function () { $('#calendar_backgound').css('background-color', "#FFF"); }, 300);
+            //                    }
+            //                },
+            //                error: function (xhr) {
+            //                    ExibirModalErro('Não foi possivel atualizar os dados do Calendário!');
+            //                },
+            //                async: true,
+            //                processData: false
+            //            });
+            //        }
+            //    }, 5000);
+            //}
         }
     </script>
-}
+@*}*@

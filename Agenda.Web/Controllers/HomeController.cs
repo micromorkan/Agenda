@@ -86,6 +86,81 @@ namespace Agenda.Web.Controllers
             //    return RedirectToAction("Index", "Contract");
             //}
 
+            Views.Shared.Components.Models.Calendar calendario = new Views.Shared.Components.Models.Calendar();
+
+            calendario.IdUsuario = 1;
+            calendario.NomeUsuario = "Diego Andrade Sampaio";
+            calendario.Eventos.Add(new CalendarEvent
+            {
+                Id = 1,
+                Titulo = "Evento 1",
+                Descricao = "Descricao evento 1",
+                DataIniEvento = String.Format(new System.Globalization.CultureInfo("en-US"), "{0:F}", DateTime.Now),
+                DataFimEvento = String.Format(new System.Globalization.CultureInfo("en-US"), "{0:F}", DateTime.Now.AddHours(1)),
+                DiaInteiro = false,
+                Status = (int)UtilWebEnums.StatusEvento.Ativo
+            });
+
+            calendario.Eventos.Add(new CalendarEvent
+            {
+                Id = 2,
+                Titulo = "Evento 2",
+                Descricao = "Descricao evento 2",
+                DataIniEvento = String.Format(new System.Globalization.CultureInfo("en-US"), "{0:F}", DateTime.Now.AddDays(1)),
+                DataFimEvento = String.Format(new System.Globalization.CultureInfo("en-US"), "{0:F}", DateTime.Now.AddDays(1).AddHours(1)),
+                DiaInteiro = false,
+                Status = (int)UtilWebEnums.StatusEvento.Cancelado
+            });
+
+            calendario.Eventos.Add(new CalendarEvent
+            {
+                Id = 3,
+                Titulo = "Evento 3",
+                Descricao = "Descricao evento 3",
+                DataIniEvento = String.Format(new System.Globalization.CultureInfo("en-US"), "{0:F}", DateTime.Now.AddDays(-1)),
+                DataFimEvento = String.Format(new System.Globalization.CultureInfo("en-US"), "{0:F}", DateTime.Now.AddDays(-1).AddHours(1)),
+                DiaInteiro = false,
+                Status = (int)UtilWebEnums.StatusEvento.Ativo
+            });
+
+            calendario.Eventos.Add(new CalendarEvent
+            {
+                Id = 4,
+                Titulo = "Evento 4",
+                Descricao = "Descricao evento 4",
+                DataIniEvento = String.Format(new System.Globalization.CultureInfo("en-US"), "{0:F}", DateTime.Now.AddDays(-2).AddHours(2)),
+                DataFimEvento = String.Format(new System.Globalization.CultureInfo("en-US"), "{0:F}", DateTime.Now.AddDays(-2).AddHours(3)),
+                DiaInteiro = false,
+                Status = (int)UtilWebEnums.StatusEvento.Ativo
+            });
+
+            calendario.Eventos.Add(new CalendarEvent
+            {
+                Id = 5,
+                Titulo = "Evento 5",
+                Descricao = "Descricao evento 5",
+                DataIniEvento = String.Format(new System.Globalization.CultureInfo("en-US"), "{0:F}", DateTime.Now.AddDays(-2).AddHours(4)),
+                DataFimEvento = String.Format(new System.Globalization.CultureInfo("en-US"), "{0:F}", DateTime.Now.AddDays(-2).AddHours(5)),
+                DiaInteiro = false,
+                Status = (int)UtilWebEnums.StatusEvento.Ativo
+            });
+
+            calendario.Eventos.Add(new CalendarEvent
+            {
+                Id = 6,
+                Titulo = "Evento 6",
+                Descricao = "Descricao evento 6",
+                DataIniEvento = String.Format(new System.Globalization.CultureInfo("en-US"), "{0:F}", DateTime.Now.AddDays(-2).AddHours(6)),
+                DataFimEvento = String.Format(new System.Globalization.CultureInfo("en-US"), "{0:F}", DateTime.Now.AddDays(-2).AddHours(7)),
+                DiaInteiro = false,
+                Status = (int)UtilWebEnums.StatusEvento.Ativo
+            });
+
+            //calendario.Acoes.ControllerAtualizarCalendar = "Home";
+            //calendario.Acoes.ActionAtualizarCalendar = "AtualizarCalendario";
+
+            dashboard.Calendar = calendario;
+
             return View(dashboard);
         }
 
